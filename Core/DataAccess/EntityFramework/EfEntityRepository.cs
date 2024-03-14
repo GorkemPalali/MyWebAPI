@@ -12,17 +12,15 @@ namespace Core.DataAccess.EntityFramework
     public class EfEntityRepositoryBase<TEntity, TContext> : IEntityRepository<TEntity>
         where TEntity : class, IEntity, new()
         where TContext : DbContext, new()
-
     {
         public void Add(TEntity entity)
         {
-            //using içine yazılan nesneler using bitince anında garbage collectora gönderilir
-            //IDisponsable pattern implementation of C#
+            //IDisposable pattern implementation of c#
             using (TContext context = new TContext())
             {
-                var addedEntity = context.Entry(entity); //Referansı yakalar
-                addedEntity.State = EntityState.Added; // Ne yapılacağını seçer
-                context.SaveChanges(); // Yukardaki bütün işlemleri gerçekleştirir
+                var addedEntity = context.Entry(entity);
+                addedEntity.State = EntityState.Added;
+                context.SaveChanges();
             }
         }
 
@@ -39,7 +37,7 @@ namespace Core.DataAccess.EntityFramework
         public TEntity Get(Expression<Func<TEntity, bool>> filter)
         {
             using (TContext context = new TContext())
-            {//Dbsetteki producta bağlanmak için context.Set<...> kullanılır 
+            {
                 return context.Set<TEntity>().SingleOrDefault(filter);
             }
         }
@@ -48,7 +46,8 @@ namespace Core.DataAccess.EntityFramework
         {
             using (TContext context = new TContext())
             {
-                return filter == null ? context.Set<TEntity>().ToList()
+                return filter == null
+                    ? context.Set<TEntity>().ToList()
                     : context.Set<TEntity>().Where(filter).ToList();
             }
         }

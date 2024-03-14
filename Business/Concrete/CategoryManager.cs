@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
 using System;
@@ -9,25 +10,25 @@ using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
-    public class CategoryManager: ICategoryService
+    public class CategoryManager : ICategoryService
     {
-        ICategoryDal _categoryDal; // Constractor injection
+        ICategoryDal _categoryDal;
+
         public CategoryManager(ICategoryDal categoryDal)
         {
             _categoryDal = categoryDal;
         }
 
-        public List<Category> GetAll()
+        public IDataResult<List<Category>> GetAll()
         {
-            //İş kodlarının olacağı kısım
-            //Şu an tüm kategorilerin getirlimesini istiyoruz
-            return _categoryDal.GetAll();
+            //İş kodları
+            return new SuccessDataResult<List<Category>>(_categoryDal.GetAll());
         }
 
-        //Selecet * from Categories where categoryId = 3 mantığını yazdık
-        public Category GetById(int categoryId)
+        //Select * from Categories where CategoryId = 3
+        public IDataResult<Category> GetById(int categoryId)
         {
-            return _categoryDal.Get(c => c.CategoryId == categoryId);
+            return new SuccessDataResult<Category>(_categoryDal.Get(c => c.CategoryId == categoryId));
         }
 
     }
