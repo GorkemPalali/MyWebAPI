@@ -1,4 +1,5 @@
 ﻿using Business.Abstract;
+using Business.BusinessAspects.Autofac;
 using Business.CCS;
 using Business.Constants;
 using Business.ValidationRules.FluentValidation;
@@ -30,11 +31,14 @@ namespace Business.Concrete
             _categoryService = categoryService;
         }
 
-
-
+        [SecuredOperation("product.add, admin")]
+        //Cacheremove, Performance, Transaction, Yetkilendirme
         [ValidationAspect(typeof(ProductValidator))]
         public IResult Add(Product product)
         {
+            //iş kodları
+            //validation(doğrulama)=> nesne için gereken şartların uyumu(Min 2 karakter cart curt)
+            //validation ayrı business ayrı yerde yapılır
             IResult result = BusinessRules.Run(CheckIfProductNameExists(product.ProductName),
                 CheckIfProductCountOfCategoryCorrect(product.CategoryId), CheckIfCategoryLimitExceded());
 
